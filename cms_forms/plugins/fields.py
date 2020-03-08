@@ -3,13 +3,17 @@ from django.utils.translation import gettext_lazy as _
 
 from ..models import FormField
 from ..forms import fields
+from .. import config
 
 
 class FormFieldPlugin(CMSPluginBase):
     module = _("Form Fields")
     model = FormField
-    name = _("Form field")
+    name = _("Field")
     render_template = "cms_forms/field.html"
+    form = fields.FieldForm
+    allow_children = True
+    child_classes = config.WIDGET_PLUGIN_NAMES
 
 
 class CharFieldPlugin(FormFieldPlugin):
@@ -17,17 +21,14 @@ class CharFieldPlugin(FormFieldPlugin):
     form = fields.CharFieldForm
 
 
-
 class IntegerFieldPlugin(FormFieldPlugin):
     name = _("Integer field")
     form = fields.IntegerFieldForm
 
 
-
 class FloatFieldPlugin(IntegerFieldPlugin):
     name = _("Float field")
     form = fields.FloatFieldForm
-
 
 
 class DecimalFieldPlugin(IntegerFieldPlugin):
@@ -39,11 +40,9 @@ class BaseTemporalFieldPlugin(FormFieldPlugin):
     pass
 
 
-
 class DateFieldPlugin(BaseTemporalFieldPlugin):
     name = _("Date field")
     form = fields.DateFieldForm
-
 
 
 class TimeFieldPlugin(BaseTemporalFieldPlugin):
@@ -51,11 +50,9 @@ class TimeFieldPlugin(BaseTemporalFieldPlugin):
     form = fields.TimeFieldForm
 
 
-
 class DateTimeFieldPlugin(BaseTemporalFieldPlugin):
     name = _("DateTime field")
     form = fields.DateTimeFieldForm
-
 
 
 class DurationFieldPlugin(FormFieldPlugin):
@@ -63,11 +60,9 @@ class DurationFieldPlugin(FormFieldPlugin):
     form = fields.DurationFieldForm
 
 
-
 class RegexFieldPlugin(CharFieldPlugin):
     name = _("Regex field")
     form = fields.RegexFieldForm
-
 
 
 class EmailFieldPlugin(CharFieldPlugin):
@@ -75,11 +70,9 @@ class EmailFieldPlugin(CharFieldPlugin):
     form = fields.EmailFieldForm
 
 
-
 class FileFieldPlugin(FormFieldPlugin):
     name = _("File field")
     form = fields.FileFieldForm
-
 
 
 class ImageFieldPlugin(FileFieldPlugin):
@@ -87,11 +80,9 @@ class ImageFieldPlugin(FileFieldPlugin):
     form = fields.ImageFieldForm
 
 
-
 class URLFieldPlugin(CharFieldPlugin):
     name = _("URL field")
     form = fields.URLFieldForm
-
 
 
 class BooleanFieldPlugin(FormFieldPlugin):
@@ -99,11 +90,9 @@ class BooleanFieldPlugin(FormFieldPlugin):
     form = fields.BooleanFieldForm
 
 
-
 class NullBooleanFieldPlugin(BooleanFieldPlugin):
     name = _("NullBoolean field")
     form = fields.NullBooleanFieldForm
-
 
 
 class ChoiceFieldPlugin(FormFieldPlugin):
@@ -111,11 +100,9 @@ class ChoiceFieldPlugin(FormFieldPlugin):
     form = fields.ChoiceFieldForm
 
 
-
 class TypedChoiceFieldPlugin(ChoiceFieldPlugin):
     name = _("TypedChoice field")
     form = fields.TypedChoiceFieldForm
-
 
 
 class MultipleChoiceFieldPlugin(ChoiceFieldPlugin):
@@ -123,11 +110,9 @@ class MultipleChoiceFieldPlugin(ChoiceFieldPlugin):
     form = fields.MultipleChoiceFieldForm
 
 
-
 class TypedMultipleChoiceFieldPlugin(ChoiceFieldPlugin):
     name = _("TypedMultipleChoice field")
     form = fields.TypedMultipleChoiceFieldForm
-
 
 
 class ComboFieldPlugin(FormFieldPlugin):
@@ -135,11 +120,9 @@ class ComboFieldPlugin(FormFieldPlugin):
     form = fields.ComboFieldForm
 
 
-
 class MultiValueFieldPlugin(FormFieldPlugin):
     name = _("MultiValue field")
     form = fields.MultiValueFieldForm
-
 
 
 class FilePathFieldPlugin(ChoiceFieldPlugin):
@@ -147,11 +130,9 @@ class FilePathFieldPlugin(ChoiceFieldPlugin):
     form = fields.FilePathFieldForm
 
 
-
 class SplitDateTimeFieldPlugin(MultiValueFieldPlugin):
     name = _("SplitDateTime field")
     form = fields.SplitDateTimeFieldForm
-
 
 
 class GenericIPAddressFieldPlugin(CharFieldPlugin):
@@ -159,11 +140,9 @@ class GenericIPAddressFieldPlugin(CharFieldPlugin):
     form = fields.GenericIPAddressFieldForm
 
 
-
 class SlugFieldPlugin(CharFieldPlugin):
     name = _("Slug field")
     form = fields.SlugFieldForm
-
 
 
 class UUIDFieldPlugin(CharFieldPlugin):

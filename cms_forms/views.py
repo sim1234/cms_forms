@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from sekizai.context import SekizaiContext
 
-from .models import Form
 
 def get_plugin(request, model, form_pk):
     form_obj = get_object_or_404(model, pk=form_pk)
@@ -38,7 +37,7 @@ class BaseFormSubmissionView(View):
         form = plugin.build_form_cls()(request.POST, request.FILES)
         plugin.form = form
         if form.is_valid():
-            print("OK")
+            print("OK")  # TODO
         else:
             print("NO", form.errors)
         return self.render(request, plugin)

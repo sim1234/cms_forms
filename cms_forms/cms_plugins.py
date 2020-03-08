@@ -1,36 +1,9 @@
-from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
-from django.utils.translation import gettext_lazy as _
 
-from .plugins import forms, fields
+from .importer import TypeReference
+from . import config
 
-
-plugin_pool.register_plugin(forms.FormPlugin)
-
-plugin_pool.register_plugin(fields.CharFieldPlugin)
-plugin_pool.register_plugin(fields.IntegerFieldPlugin)
-plugin_pool.register_plugin(fields.FloatFieldPlugin)
-plugin_pool.register_plugin(fields.DecimalFieldPlugin)
-plugin_pool.register_plugin(fields.DateFieldPlugin)
-plugin_pool.register_plugin(fields.TimeFieldPlugin)
-plugin_pool.register_plugin(fields.DateTimeFieldPlugin)
-plugin_pool.register_plugin(fields.DurationFieldPlugin)
-plugin_pool.register_plugin(fields.RegexFieldPlugin)
-plugin_pool.register_plugin(fields.EmailFieldPlugin)
-plugin_pool.register_plugin(fields.FileFieldPlugin)
-plugin_pool.register_plugin(fields.ImageFieldPlugin)
-plugin_pool.register_plugin(fields.URLFieldPlugin)
-plugin_pool.register_plugin(fields.BooleanFieldPlugin)
-plugin_pool.register_plugin(fields.NullBooleanFieldPlugin)
-plugin_pool.register_plugin(fields.ChoiceFieldPlugin)
-plugin_pool.register_plugin(fields.TypedChoiceFieldPlugin)
-plugin_pool.register_plugin(fields.MultipleChoiceFieldPlugin)
-plugin_pool.register_plugin(fields.TypedMultipleChoiceFieldPlugin)
-plugin_pool.register_plugin(fields.ComboFieldPlugin)
-plugin_pool.register_plugin(fields.MultiValueFieldPlugin)
-plugin_pool.register_plugin(fields.FilePathFieldPlugin)
-plugin_pool.register_plugin(fields.SplitDateTimeFieldPlugin)
-plugin_pool.register_plugin(fields.GenericIPAddressFieldPlugin)
-plugin_pool.register_plugin(fields.SlugFieldPlugin)
-plugin_pool.register_plugin(fields.UUIDFieldPlugin)
-
+for src in [config.FORM_PLUGINS, config.FIELD_PLUGINS, config.WIDGET_PLUGINS]:
+    for plugin_str in src:
+        plugin = TypeReference(plugin_str).type
+        plugin_pool.register_plugin(plugin)

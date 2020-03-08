@@ -38,6 +38,7 @@ class CustomJSONEncoder(json.JSONEncoder):
     JSONEncoder subclass that knows how to encode date/time, decimal types, and
     UUIDs.
     """
+
     @staticmethod
     def wrap(type_, value):
         return {"__type__": type_, "__value__": value}

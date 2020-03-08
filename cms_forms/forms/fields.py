@@ -4,12 +4,13 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ..models import FormField
+from ..importer import TypeReference
 
 
-class BaseFormFieldForm(forms.ModelForm):
+class BaseFieldForm(forms.ModelForm):
     class Meta:
         model = FormField
-        fields = ("name", )
+        fields = ("name",)
 
     field_type = None
     field_parameters = []
@@ -19,7 +20,7 @@ class BaseFormFieldForm(forms.ModelForm):
         self.load_field_kwargs()
 
     def load_field_kwargs(self):
-        kwargs = self.instance.kwargs
+        kwargs = self.instance.field_parameters
         for param in self.field_parameters:
             field = self.fields[param]
             field.initial = kwargs.get(param, field.initial)
@@ -28,7 +29,7 @@ class BaseFormFieldForm(forms.ModelForm):
         return {param: self.cleaned_data[param] for param in self.field_parameters}
 
     def update_instance(self):
-        self.instance.kwargs = self.get_field_kwargs()
+        self.instance.field_parameters = self.get_field_kwargs()
         self.instance.field_type = self.field_type
 
     def clean(self):
@@ -41,9 +42,17 @@ class BaseFormFieldForm(forms.ModelForm):
             raise forms.ValidationError(_("Form field creation failed: %(error)s"), params={"error": e})
 
 
-class FormFieldForm(BaseFormFieldForm):
-    field_type = "FormField"
-    field_parameters = BaseFormFieldForm.field_parameters + ["required", "label", "help_text", "show_hidden_initial", "localize", "disabled", "label_suffix"]
+class FieldForm(BaseFieldForm):
+    field_type = TypeReference("django.forms.fields.Field")
+    field_parameters = BaseFieldForm.field_parameters + [
+        "required",
+        "label",
+        "help_text",
+        "show_hidden_initial",
+        "localize",
+        "disabled",
+        "label_suffix",
+    ]
 
     required = forms.BooleanField(required=False, initial=True)
     widget = None  # TODO
@@ -58,9 +67,9 @@ class FormFieldForm(BaseFormFieldForm):
     label_suffix = forms.CharField(required=False, empty_value=None)
 
 
-class CharFieldForm(FormFieldForm):
-    field_type = "CharField"
-    field_parameters = FormFieldForm.field_parameters + ["max_length", "min_length", "strip", "empty_value"]
+class CharFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.CharField")
+    field_parameters = FieldForm.field_parameters + ["max_length", "min_length", "strip", "empty_value"]
 
     max_length = forms.IntegerField(required=False, min_value=0)
     min_length = forms.IntegerField(required=False, min_value=0)
@@ -68,23 +77,23 @@ class CharFieldForm(FormFieldForm):
     empty_value = forms.CharField(required=False, empty_value="")
 
 
-class IntegerFieldForm(FormFieldForm):
-    field_type = "IntegerField"
-    field_parameters = FormFieldForm.field_parameters + ["max_value", "min_value"]
+class IntegerFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.IntegerField")
+    field_parameters = FieldForm.field_parameters + ["max_value", "min_value"]
 
     max_value = forms.IntegerField(required=False)
     min_value = forms.IntegerField(required=False)
 
 
 class FloatFieldForm(IntegerFieldForm):
-    field_type = "FloatField"
+    field_type = TypeReference("django.forms.fields.FloatField")
 
     max_value = forms.FloatField(required=False)
     min_value = forms.FloatField(required=False)
 
 
 class DecimalFieldForm(IntegerFieldForm):
-    field_type = "DecimalField"
+    field_type = TypeReference("django.forms.fields.DecimalField")
     field_parameters = IntegerFieldForm.field_parameters + ["max_digits", "decimal_places"]
 
     max_value = forms.DecimalField(required=False)
@@ -93,30 +102,30 @@ class DecimalFieldForm(IntegerFieldForm):
     decimal_places = forms.IntegerField(required=False)
 
 
-class BaseTemporalFieldForm(FormFieldForm):
-    field_type = "BaseTemporalField"
+class BaseTemporalFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.BaseTemporalField")
 
     input_formats = None  # TODO
 
 
 class DateFieldForm(BaseTemporalFieldForm):
-    field_type = "DateField"
+    field_type = TypeReference("django.forms.fields.DateField")
 
 
 class TimeFieldForm(BaseTemporalFieldForm):
-    field_type = "TimeField"
+    field_type = TypeReference("django.forms.fields.TimeField")
 
 
 class DateTimeFieldForm(BaseTemporalFieldForm):
-    field_type = "DateTimeField"
+    field_type = TypeReference("django.forms.fields.DateTimeField")
 
 
-class DurationFieldForm(FormFieldForm):
-    field_type = "DurationField"
+class DurationFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.DurationField")
 
 
 class RegexFieldForm(CharFieldForm):
-    field_type = "RegexField"
+    field_type = TypeReference("django.forms.fields.RegexField")
     field_parameters = CharFieldForm.field_parameters + ["regex"]
 
     strip = forms.BooleanField(required=False, initial=False)
@@ -124,72 +133,72 @@ class RegexFieldForm(CharFieldForm):
 
 
 class EmailFieldForm(CharFieldForm):
-    field_type = "EmailField"
+    field_type = TypeReference("django.forms.fields.EmailField")
     field_parameters = [p for p in CharFieldForm.field_parameters if p != "strip"]
 
     strip = None
 
 
-class FileFieldForm(FormFieldForm):
-    field_type = "FileField"
-    field_parameters = FormFieldForm.field_parameters + ["max_length", "allow_empty_file"]
+class FileFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.FileField")
+    field_parameters = FieldForm.field_parameters + ["max_length", "allow_empty_file"]
 
     max_length = forms.IntegerField(required=False, min_value=0)
     allow_empty_file = forms.BooleanField(required=False, initial=False)
 
 
 class ImageFieldForm(FileFieldForm):
-    field_type = "ImageField"
+    field_type = TypeReference("django.forms.fields.ImageField")
 
 
 class URLFieldForm(CharFieldForm):
-    field_type = "URLField"
+    field_type = TypeReference("django.forms.fields.URLField")
     field_parameters = [p for p in CharFieldForm.field_parameters if p != "strip"]
 
     strip = None
 
 
-class BooleanFieldForm(FormFieldForm):
-    field_type = "BooleanField"
+class BooleanFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.BooleanField")
 
 
 class NullBooleanFieldForm(BooleanFieldForm):
-    field_type = "NullBooleanField"
+    field_type = TypeReference("django.forms.fields.NullBooleanField")
 
 
-class ChoiceFieldForm(FormFieldForm):
-    field_type = "ChoiceField"
+class ChoiceFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.ChoiceField")
 
     # choices  # TODO
 
 
 class TypedChoiceFieldForm(ChoiceFieldForm):
-    field_type = "TypedChoiceField"
+    field_type = TypeReference("django.forms.fields.TypedChoiceField")
     # TODO
 
 
 class MultipleChoiceFieldForm(ChoiceFieldForm):
-    field_type = "MultipleChoiceField"
+    field_type = TypeReference("django.forms.fields.MultipleChoiceField")
     # TODO
 
 
 class TypedMultipleChoiceFieldForm(ChoiceFieldForm):
-    field_type = "TypedMultipleChoiceField"
+    field_type = TypeReference("django.forms.fields.TypedMultipleChoiceField")
     # TODO
 
 
-class ComboFieldForm(FormFieldForm):
-    field_type = "ComboField"
+class ComboFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.ComboField")
     # TODO?
 
 
-class MultiValueFieldForm(FormFieldForm):
-    field_type = "MultiValueField"
+class MultiValueFieldForm(FieldForm):
+    field_type = TypeReference("django.forms.fields.MultiValueField")
     # TODO?
 
 
 class FilePathFieldForm(ChoiceFieldForm):
-    field_type = "FilePathField"
+    field_type = TypeReference("django.forms.fields.FilePathField")
     field_parameters = ChoiceFieldForm.field_parameters + ["path", "match", "recursive", "allow_files", "allow_folders"]
 
     path = forms.CharField()
@@ -200,7 +209,7 @@ class FilePathFieldForm(ChoiceFieldForm):
 
 
 class SplitDateTimeFieldForm(MultiValueFieldForm):
-    field_type = "SplitDateTimeField"
+    field_type = TypeReference("django.forms.fields.SplitDateTimeField")
 
     # TODO
     input_date_formats = None
@@ -208,7 +217,7 @@ class SplitDateTimeFieldForm(MultiValueFieldForm):
 
 
 class GenericIPAddressFieldForm(CharFieldForm):
-    field_type = "GenericIPAddressField"
+    field_type = TypeReference("django.forms.fields.GenericIPAddressField")
     field_parameters = CharFieldForm.field_parameters + ["protocol", "unpack_ipv4"]
 
     protocol = forms.ChoiceField(choices=(("ipv4", "IPv4"), ("ipv6", "IPv6"), ("both", _("Both"))), initial="both")
@@ -216,13 +225,11 @@ class GenericIPAddressFieldForm(CharFieldForm):
 
 
 class SlugFieldForm(CharFieldForm):
-    field_type = "SlugField"
+    field_type = TypeReference("django.forms.fields.SlugField")
     field_parameters = CharFieldForm.field_parameters + ["allow_unicode"]
 
     allow_unicode = forms.BooleanField(required=False, initial=False)
 
 
 class UUIDFieldForm(CharFieldForm):
-    field_type = "UUIDField"
-
-
+    field_type = TypeReference("django.forms.fields.UUIDField")

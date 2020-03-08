@@ -2,7 +2,6 @@ from cms.plugin_base import CMSPluginBase
 from django.utils.translation import gettext_lazy as _
 
 from ..models import Form
-from ..forms import forms
 
 
 class BaseFormPlugin(CMSPluginBase):

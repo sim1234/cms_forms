@@ -7,27 +7,34 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0022_auto_20180620_1551'),
-        ('cms_forms', '0003_auto_20200302_1910'),
+        ("cms", "0022_auto_20180620_1551"),
+        ("cms_forms", "0003_auto_20200302_1910"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FormField',
+            name="FormField",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_formfield', serialize=False, to='cms.CMSPlugin')),
-                ('name', models.CharField(max_length=255)),
-                ('field_type', models.CharField(max_length=255)),
-                ('field_parameters', models.TextField(default='{}')),
-                ('widget_type', models.CharField(blank=True, default='', max_length=255)),
-                ('widget_parameters', models.TextField(default='{}')),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_formfield",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("field_type", models.CharField(max_length=255)),
+                ("field_parameters", models.TextField(default="{}")),
+                ("widget_type", models.CharField(blank=True, default="", max_length=255)),
+                ("widget_parameters", models.TextField(default="{}")),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
-        migrations.DeleteModel(
-            name='BaseFormField',
-        ),
+        migrations.DeleteModel(name="BaseFormField",),
     ]

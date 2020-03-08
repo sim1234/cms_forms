@@ -1,23 +1,13 @@
-import json
-
 from django.db import models
 from cms.models.pluginmodel import CMSPlugin
-from django.forms import forms, fields, widgets
-from django.core import validators
-from django.utils.translation import gettext_lazy as _
 
-from .json import CustomJSONEncoder, CustomJSONDecoder
-
-FIELD_TYPE_CHOICES = (
-    ("", _("")),
-)
-WIDGET_CHOICES = (
-    (None, _("Default")),
-)
+from .fields import JSONField, TypeReferenceField
+from .importer import TypeReference
 
 
 class Form(CMSPlugin):
     name = models.CharField(max_length=255)
+    form_type = TypeReferenceField(max_length=255, default=TypeReference("django.forms.forms.Form"))
 
     _fields = None
     _form = None
@@ -52,7 +42,8 @@ class Form(CMSPlugin):
         return self.child_plugin_instances
 
     def build_form_cls(self):
-        return type("DynamicForm", (forms.Form,), {field.name: field.build_field() for field in self.fields})
+        form_cls = self.form_type.type
+        return type("DynamicForm", (form_cls,), {field.name: field.build_field() for field in self.fields})
 
     def init_fields(self):
         for field in self.fields:
@@ -62,35 +53,25 @@ class Form(CMSPlugin):
 
 class FormField(CMSPlugin):
     name = models.CharField(max_length=255)
-    field_type = models.CharField(max_length=255)
-    field_parameters = models.TextField(default="{}")
-    widget_type = models.CharField(max_length=255, blank=True, default="")
-    widget_parameters = models.TextField(default="{}")
+    field_type = TypeReferenceField(max_length=255, default=TypeReference("django.forms.fields.Field"))
+    field_parameters = JSONField(default=dict, blank=True)
 
     form = None
     bound_field = None
 
-    @property
-    def kwargs(self):
-        return json.loads(self.field_parameters, cls=CustomJSONDecoder)
-
-    @kwargs.setter
-    def kwargs(self, value):
-        self.field_parameters = json.dumps(value, cls=CustomJSONEncoder)
-
-    @property
-    def widget_kwargs(self):
-        return json.loads(self.widget_parameters, cls=CustomJSONDecoder)
-
-    @widget_kwargs.setter
-    def widget_kwargs(self, value):
-        self.widget_parameters = json.dumps(value, cls=CustomJSONEncoder)
-
     def build_field(self):
         # return fields.CharField(widget=widgets.Textarea())
-        kwargs = self.kwargs
-        if self.widget_type:
-            widget_cls = getattr(widgets, self.widget_type)
-            kwargs["widget"] = widget_cls(**self.widget_kwargs)
-        field_cls = getattr(fields, self.field_type)
-        return field_cls(**kwargs)
+        kwargs = self.field_parameters.copy()
+        for plugin in self.child_plugin_instances:
+            if isinstance(plugin, FormWidget):
+                kwargs["widget"] = plugin.build_widget()
+        return self.field_type.type(**kwargs)
+
+
+class FormWidget(CMSPlugin):
+    widget_type = TypeReferenceField(max_length=255, default=TypeReference("django.forms.widgets.Widget"))
+    widget_parameters = JSONField(default=dict, blank=True)
+
+    def build_widget(self):
+        # return widgets.Textarea()
+        return self.widget_type.type(**self.widget_parameters)

@@ -9,19 +9,28 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('cms', '0022_auto_20180620_1551'),
+        ("cms", "0022_auto_20180620_1551"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Form',
+            name="Form",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_form', serialize=False, to='cms.CMSPlugin')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_form",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
     ]
