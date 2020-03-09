@@ -1,0 +1,4 @@
+{% load cms_tags %}
+{% with instance.bound_field as field %}
+  {% include plugin.field_template %}
+{% endwith %}

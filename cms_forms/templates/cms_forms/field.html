@@ -1,8 +1,5 @@
-{% load cms_tags %}
-{% with instance.bound_field as field %}
-  {{ field.label }}
-  {{ field.errors }}
-  {{ field }}
-  {{ field.help_text }}
-  <br>
-{% endwith %}
+{{ field.label }}
+{{ field.errors }}
+{{ field }}
+{{ field.help_text }}
+<br>

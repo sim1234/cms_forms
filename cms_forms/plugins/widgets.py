@@ -15,6 +15,11 @@ class WidgetPlugin(CMSPluginBase):
     require_parent = True
     parent_classes = config.FIELD_PLUGIN_NAMES
 
+    def render(self, *args, **kwargs):
+        context = super().render(*args, **kwargs)
+        context["plugin"] = self
+        return context
+
 
 class InputPlugin(WidgetPlugin):
     name = _("Input")

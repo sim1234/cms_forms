@@ -1,0 +1,28 @@
+{% load cms_tags sekizai_tags static %}
+{% addtoblock "js" %}<script type="text/javascript" src="{% static "cms_forms/forms.js" %}"></script>{% endaddtoblock %}
+{% addtoblock "js" %}{% if instance.load != "static" %}<script>
+    window.addEventListener('load', (event) => {
+        submitCMSForm(document.getElementById("cms_form-{{ instance.pk }}"), 'GET');
+    });
+</script>{% endif %}{% endaddtoblock %}
+
+{% if not instance.render_inner_only %}
+    <form action="{% url "form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');">
+{% endif %}
+
+{% if instance.load != "lazy" or instance.render_inner_only %}
+    {{ instance.form.non_field_errors }}
+    {% for plugin in instance.get_child_plugin_instances %}
+        {% render_plugin plugin %}
+    {% endfor %}
+    {% if instance.auto_render_fields %}
+        {% for field in instance.form %}
+            {% include plugin.auto_render_field_template %}
+        {% endfor %}
+    {% endif %}
+    <input type="submit" value="sub">
+{% endif %}
+
+{% if not instance.render_inner_only %}
+    </form>
+{% endif %}

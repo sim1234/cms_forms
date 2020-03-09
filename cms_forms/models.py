@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from cms.models.pluginmodel import CMSPlugin
 
 from .fields import JSONField, TypeReferenceField
@@ -8,6 +9,16 @@ from .importer import TypeReference
 class Form(CMSPlugin):
     name = models.CharField(max_length=255)
     form_type = TypeReferenceField(max_length=255, default=TypeReference("django.forms.forms.Form"))
+    auto_render_fields = models.BooleanField(default=False)
+    load = models.CharField(
+        max_length=255,
+        choices=(
+            ("static", _("Render normally")),
+            ("lazy", _("Render empty and load after the page is loaded")),
+            ("reload", _("Render normally and reload after the page is loaded")),
+        ),
+        default="reload",
+    )
 
     _fields = None
     _form = None
@@ -50,6 +61,9 @@ class Form(CMSPlugin):
             field.form = self.form
             field.bound_field = self.form[field.name]
 
+    def __str__(self):
+        return self.name
+
 
 class FormField(CMSPlugin):
     name = models.CharField(max_length=255)
@@ -60,12 +74,16 @@ class FormField(CMSPlugin):
     bound_field = None
 
     def build_field(self):
-        # return fields.CharField(widget=widgets.Textarea())
         kwargs = self.field_parameters.copy()
-        for plugin in self.child_plugin_instances:
+        for plugin in self.child_plugin_instances or ():
             if isinstance(plugin, FormWidget):
                 kwargs["widget"] = plugin.build_widget()
+            elif isinstance(plugin, ChoiceOption):
+                kwargs.setdefault("choices", []).append((plugin.value, plugin.display))
         return self.field_type.type(**kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 class FormWidget(CMSPlugin):
@@ -73,5 +91,15 @@ class FormWidget(CMSPlugin):
     widget_parameters = JSONField(default=dict, blank=True)
 
     def build_widget(self):
-        # return widgets.Textarea()
         return self.widget_type.type(**self.widget_parameters)
+
+    def __str__(self):
+        return ""
+
+
+class ChoiceOption(CMSPlugin):
+    value = models.CharField(max_length=255, blank=True, default="")
+    display = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return f"{self.value} : {self.display}"

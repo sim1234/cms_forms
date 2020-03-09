@@ -62,6 +62,19 @@ WIDGET_PLUGINS = [
     "cms_forms.plugins.widgets.SelectDateWidgetPlugin",
 ]
 
+CHOICE_OPTION_PLUGINS = [
+    "cms_forms.plugins.choices.ChoiceOptionPlugin",
+]
+
+CHOICE_FIELD_PLUGINS = [
+    "cms_forms.plugins.fields.ChoiceFieldPlugin",
+    "cms_forms.plugins.fields.TypedChoiceFieldPlugin",
+    "cms_forms.plugins.fields.MultipleChoiceFieldPlugin",
+    "cms_forms.plugins.fields.TypedMultipleChoiceFieldPlugin",
+]
+
 FORM_PLUGIN_NAMES = [name(p) for p in FORM_PLUGINS]
 FIELD_PLUGIN_NAMES = [name(p) for p in FIELD_PLUGINS]
 WIDGET_PLUGIN_NAMES = [name(p) for p in WIDGET_PLUGINS]
+CHOICE_OPTION_PLUGIN_NAMES = [name(p) for p in CHOICE_OPTION_PLUGINS]
+CHOICE_FIELD_PLUGIN_NAMES = [name(p) for p in CHOICE_FIELD_PLUGINS]

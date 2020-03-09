@@ -180,7 +180,12 @@ class MultiWidgetForm(WidgetForm):
 
 class SplitDateTimeWidgetForm(MultiWidgetForm):
     widget_type = TypeReference(widgets.SplitDateTimeWidget)
-    # TODO
+    widget_parameters = MultiWidgetForm.attrs_parameters + ["date_format", "time_format", "date_attrs", "time_attrs"]
+
+    date_format = forms.CharField(required=False)
+    time_format = forms.CharField(required=False)
+    date_attrs = JSONFormField(required=False, empty_value=None)
+    time_attrs = JSONFormField(required=False, empty_value=None)
 
 
 class SplitHiddenDateTimeWidgetForm(SplitDateTimeWidgetForm):
@@ -189,4 +194,8 @@ class SplitHiddenDateTimeWidgetForm(SplitDateTimeWidgetForm):
 
 class SelectDateWidgetForm(WidgetForm):
     widget_type = TypeReference(widgets.SelectDateWidget)
-    # TODO
+    widget_parameters = WidgetForm.attrs_parameters + ["years", "months", "empty_label"]
+
+    years = JSONFormField(required=False, empty_value=None)
+    months = JSONFormField(required=False, empty_value=None)
+    empty_label = forms.CharField(required=False)
