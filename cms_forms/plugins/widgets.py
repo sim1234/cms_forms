@@ -2,7 +2,7 @@ from cms.plugin_base import CMSPluginBase
 from django.utils.translation import gettext_lazy as _
 
 from ..models import FormWidget
-from ..forms import widgets
+from ..plugin_forms import widgets
 from .. import config
 
 

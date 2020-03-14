@@ -1,9 +1,13 @@
+import functools
+
 from cms.plugin_rendering import ContentRenderer
 from cms.utils.plugins import get_plugins
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views import View
 from sekizai.context import SekizaiContext
+
+from .forms import BaseForm
 
 
 def get_plugin(request, model, form_pk):
@@ -32,12 +36,17 @@ class BaseFormSubmissionView(View):
         plugin = self.get_plugin(request, form_pk)
         return self.render(request, plugin)
 
+    def save(self, plugin, form):
+        default = functools.partial(BaseForm.cms_save, form)
+        return getattr(form, "cms_save", default)(self.request, plugin)
+
     def post(self, request, form_pk):
         plugin = self.get_plugin(request, form_pk)
         form = plugin.build_form_cls()(request.POST, request.FILES)
         plugin.form = form
         if form.is_valid():
             print("OK")  # TODO
+            self.save(plugin, form)
         else:
             print("NO", form.errors)
         return self.render(request, plugin)

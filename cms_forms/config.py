@@ -4,6 +4,8 @@ def name(s):
 
 FORM_PLUGINS = [
     "cms_forms.plugins.forms.FormPlugin",
+    "cms_forms.plugins.forms.ModelFormPlugin",
+    "cms_forms.plugins.forms.SavingFormPlugin",
 ]
 
 FIELD_PLUGINS = [

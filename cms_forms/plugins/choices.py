@@ -2,7 +2,7 @@ from cms.plugin_base import CMSPluginBase
 from django.utils.translation import gettext_lazy as _
 
 from ..models import ChoiceOption
-from ..forms import choices
+from ..plugin_forms import choices
 from .. import config
 
 

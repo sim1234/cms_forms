@@ -9,6 +9,7 @@ from .importer import TypeReference
 class Form(CMSPlugin):
     name = models.CharField(max_length=255)
     form_type = TypeReferenceField(max_length=255, default=TypeReference("django.forms.forms.Form"))
+    meta_parameters = JSONField(default=dict, blank=True)
     auto_render_fields = models.BooleanField(default=False)
     load = models.CharField(
         max_length=255,
@@ -42,7 +43,7 @@ class Form(CMSPlugin):
 
     @classmethod
     def get_form_fields(cls, plugin):
-        for plugin in plugin.child_plugin_instances:
+        for plugin in plugin.child_plugin_instances or ():
             if isinstance(plugin, FormField):
                 yield plugin
             else:
@@ -54,7 +55,9 @@ class Form(CMSPlugin):
 
     def build_form_cls(self):
         form_cls = self.form_type.type
-        return type("DynamicForm", (form_cls,), {field.name: field.build_field() for field in self.fields})
+        form_body = {field.name: field.build_field() for field in self.fields}
+        form_body["Meta"] = type("Meta", (), self.meta_parameters)
+        return type("DynamicForm", (form_cls,), form_body)
 
     def init_fields(self):
         for field in self.fields:
@@ -103,3 +106,9 @@ class ChoiceOption(CMSPlugin):
 
     def __str__(self):
         return f"{self.value} : {self.display}"
+
+
+class FormSubmission(models.Model):
+    form_name = models.CharField(max_length=255)
+    data = JSONField(default=dict, blank=True)
+    created = models.DateTimeField(auto_now_add=True)

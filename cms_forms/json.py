@@ -3,6 +3,8 @@ import decimal
 import json
 import uuid
 
+from .importer import TypeReference
+
 
 class CustomJSONDecoder(json.JSONDecoder):
     def raw_decode(self, s, idx=0):
@@ -26,6 +28,10 @@ class CustomJSONDecoder(json.JSONDecoder):
                 return decimal.Decimal(value)
             elif type_ == "uuid":
                 return uuid.UUID(value)
+            elif type_ == "typereference":
+                return TypeReference(value)
+            elif type_ == "type":
+                return TypeReference(value).type
 
         for key, value in o.items():
             if isinstance(value, dict):
@@ -57,5 +63,9 @@ class CustomJSONEncoder(json.JSONEncoder):
             return self.wrap("decimal", str(o))
         elif isinstance(o, uuid.UUID):
             return self.wrap("uuid", str(o))
+        elif isinstance(o, TypeReference):
+            return self.wrap("typereference", o.str)
+        elif isinstance(o, type):
+            return self.wrap("type", TypeReference(o).str)
         else:
             return super().default(o)
