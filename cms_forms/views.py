@@ -1,13 +1,15 @@
 import functools
 
-from cms.plugin_rendering import ContentRenderer
-from cms.utils.plugins import get_plugins
 from django.http import HttpResponse, Http404
 from django.http.response import HttpResponseBase
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.cache import never_cache
+
+from cms.plugin_rendering import ContentRenderer
+from cms.utils.plugins import get_plugins
 from sekizai.context import SekizaiContext
 
 from .forms import BaseForm
@@ -36,6 +38,7 @@ class BaseFormSubmissionView(View):
         return HttpResponse(content)
 
     @method_decorator(ensure_csrf_cookie)
+    @method_decorator(never_cache)
     def get(self, request, form_pk):
         plugin = self.get_plugin(request, form_pk)
         return self.render(request, plugin)

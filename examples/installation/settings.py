@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     "menus",
     "treebeard",
     "sekizai",
-    "mptt",
     "djangocms_text_ckeditor",
     "djangocms_snippet",
     "djangocms_style",
