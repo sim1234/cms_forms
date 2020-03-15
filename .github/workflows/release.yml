@@ -11,11 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Get tag
-        id: tag
-        run: |
-          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
@@ -30,17 +25,36 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
-      - name: Upload source release
-        uses: actions/upload-artifact@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
-          path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload source release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/django_cms_forms-${{ github.ref }}.tar.gz
+          asset_name: django_cms_forms-${{ github.ref }}.tar.gz
+          asset_content_type: application/gzip
 
       - name: Upload wheel release
-        uses: actions/upload-artifact@v1
-        with:
-          name: django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
-          path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: dist/django_cms_forms-${{ github.ref }}-py3-none-any.whl
+            asset_name: django_cms_forms-${{ github.ref }}-py3-none-any.whl
+            asset_content_type: application/zip
 
       - name: Upload to pypi
         run: |
