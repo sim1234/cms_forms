@@ -44,4 +44,4 @@ jobs:
 
       - name: Upload to pypi
         run: |
-          twine upload -u __token__ -p ${{ secrets.PYPI_TKOEN }} dist/*
+          twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} dist/*
