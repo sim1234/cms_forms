@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
-          path: releases/cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          path: dist/cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
 
       - name: Upload wheel release
         uses: actions/upload-artifact@v1
