@@ -53,6 +53,20 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: TODO
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
         run: |
-          echo "TODO"
+          python -m pip install --upgrade pip
+          pip install -r requirements-test.txt
+
+      - name: Build
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Upload to pypi
+        run: |
+          twine upload --repository-url https://test.pypi.org/legacy/ -u __token__ -p ${{ secrets.TEST_PYPI_TKOEN }} dist/*
