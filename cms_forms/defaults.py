@@ -70,3 +70,9 @@ CHOICE_FIELD_PLUGINS = [
     "cms_forms.plugins.fields.MultipleChoiceFieldPlugin",
     "cms_forms.plugins.fields.TypedMultipleChoiceFieldPlugin",
 ]
+
+BUTTON_PLUGINS = [
+    "cms_forms.plugins.buttons.ButtonPlugin",
+    "cms_forms.plugins.buttons.SubmitButtonPlugin",
+    "cms_forms.plugins.buttons.ResetButtonPlugin",
+]

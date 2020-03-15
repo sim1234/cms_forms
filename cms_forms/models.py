@@ -1,5 +1,7 @@
 from django.db import models
+from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
+
 from cms.models.pluginmodel import CMSPlugin
 
 from .fields import JSONField, TypeReferenceField
@@ -106,6 +108,18 @@ class ChoiceOption(CMSPlugin):
 
     def __str__(self):
         return f"{self.value} : {self.display}"
+
+
+class FormButton(CMSPlugin):
+    input_type = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True, default="")
+    value = models.CharField(max_length=255, blank=True, default="")
+
+    def __str__(self):
+        return self.name
+
+    def build(self):
+        return widgets.Input({"type": self.input_type}).render(self.name, self.value)
 
 
 class FormSubmission(models.Model):

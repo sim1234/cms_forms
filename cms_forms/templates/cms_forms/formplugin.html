@@ -20,15 +20,14 @@
 
 {% if instance.load != "lazy" or instance.render_inner_only %}
     {{ instance.form.non_field_errors }}
-    {% for plugin in instance.get_child_plugin_instances %}
-        {% render_plugin plugin %}
-    {% endfor %}
-    {% if instance.auto_render_fields %}
+   {% if instance.auto_render_fields %}
         {% for field in instance.form %}
             {% include plugin.auto_render_field_template %}
         {% endfor %}
     {% endif %}
-    <input type="submit" value="sub">
+    {% for plugin in instance.get_child_plugin_instances %}
+        {% render_plugin plugin %}
+    {% endfor %}
 {% endif %}
 
 {% if not instance.render_inner_only %}

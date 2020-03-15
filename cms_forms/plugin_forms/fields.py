@@ -35,13 +35,14 @@ class BaseFieldForm(forms.ModelForm):
         self.instance.field_type = self.field_type
 
     def clean(self):
-        super().clean()
+        res = super().clean()
         try:
             self.update_instance()
             self.instance.build_field()
         except Exception as e:
             logging.exception("Form field creation failed")
             raise forms.ValidationError(_("Form field creation failed: %(error)s"), params={"error": e})
+        return res
 
 
 class FieldForm(BaseFieldForm):

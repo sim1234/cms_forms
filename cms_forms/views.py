@@ -23,36 +23,36 @@ def get_plugin(request, model, form_pk):
     raise Http404()
 
 
+def render_plugin(request, plugin):
+    context = SekizaiContext({"request": request, "inner_only": True})
+    return ContentRenderer(request).render_plugin(plugin, context)
+
+
 class BaseFormSubmissionView(View):
     model = None
 
-    def get_plugin(self, request, form_pk):
-        plugin = get_plugin(request, self.model, form_pk)
+    def get_plugin(self, form_pk):
+        plugin = get_plugin(self.request, self.model, form_pk)
         _, plugin_pl = plugin.get_plugin_instance()
         plugin.render_inner_only = True
         return plugin
-
-    def render(self, request, plugin):
-        context = SekizaiContext({"request": request, "inner_only": True})
-        content = ContentRenderer(request).render_plugin(plugin, context)
-        return HttpResponse(content)
-
-    @method_decorator(ensure_csrf_cookie)
-    @method_decorator(never_cache)
-    def get(self, request, form_pk):
-        plugin = self.get_plugin(request, form_pk)
-        return self.render(request, plugin)
 
     def save(self, plugin, form):
         default = functools.partial(BaseForm.cms_save, form)
         return getattr(form, "cms_save", default)(self.request, plugin)
 
+    @method_decorator(ensure_csrf_cookie)
+    @method_decorator(never_cache)
+    def get(self, request, form_pk):
+        plugin = self.get_plugin(form_pk)
+        return HttpResponse(render_plugin(request, plugin))
+
     def post(self, request, form_pk):
-        plugin = self.get_plugin(request, form_pk)
+        plugin = self.get_plugin(form_pk)
         form = plugin.build_form_cls()(request.POST, request.FILES)
         plugin.form = form
         if form.is_valid():
             response = self.save(plugin, form)
             if isinstance(response, HttpResponseBase):
                 return response
-        return self.render(request, plugin)
+        return HttpResponse(render_plugin(request, plugin))

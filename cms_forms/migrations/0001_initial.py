@@ -77,6 +77,28 @@ class Migration(migrations.Migration):
             bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
+            name="FormButton",
+            fields=[
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_formbutton",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("input_type", models.CharField(max_length=255)),
+                ("name", models.CharField(blank=True, default="", max_length=255)),
+                ("value", models.CharField(blank=True, default="", max_length=255)),
+            ],
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
+        ),
+        migrations.CreateModel(
             name="FormField",
             fields=[
                 (

@@ -20,13 +20,14 @@ class BaseFormForm(forms.ModelForm):
         self.instance.form_type = self.form_type
 
     def clean(self):
-        super().clean()
+        res = super().clean()
         try:
             self.update_instance()
             self.instance.build_form_cls()()
         except Exception as e:
             logging.exception("Form creation failed")
             raise forms.ValidationError(_("Form creation failed: %(error)s"), params={"error": e})
+        return res
 
 
 class FormForm(BaseFormForm):

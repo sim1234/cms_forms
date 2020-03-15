@@ -9,3 +9,4 @@ from .forms import ContactFormForm
 class ContactFormPlugin(FormPlugin):
     form = ContactFormForm
     name = _("Contact Form")
+    # overwrite the render_template attribute to render the form your way

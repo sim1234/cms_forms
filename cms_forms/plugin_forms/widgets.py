@@ -35,13 +35,14 @@ class BaseWidgetForm(forms.ModelForm):
         self.instance.widget_type = self.widget_type
 
     def clean(self):
-        super().clean()
+        res = super().clean()
         try:
             self.update_instance()
             self.instance.build_widget()
         except Exception as e:
             logging.exception("Form widget creation failed")
             raise forms.ValidationError(_("Form widget creation failed: %(error)s"), params={"error": e})
+        return res
 
 
 class WidgetForm(BaseWidgetForm):
