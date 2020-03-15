@@ -3,13 +3,13 @@ import setuptools
 with open("README.md", "r") as f:
     long_description = f.read()
 
-with open('cms_forms/__init__.py', 'r') as f:
+with open("cms_forms/__init__.py", "r") as f:
     for line in f:
-        if line.startswith('__version__'):
-            version = line.strip().split('=')[1].strip(' \'"')
+        if line.startswith("__version__"):
+            version = line.strip().split("=")[1].strip(" '\"")
             break
     else:
-        version = '0.0.1'
+        version = "0.0.1"
 
 with open("requirements.txt") as f:
     _requirements = [line.split("#")[0].strip() for line in f]
@@ -27,16 +27,16 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sim1234/cms_forms",
-    license='MIT',
+    license="MIT",
     packages=setuptools.find_packages(),
     install_requires=install_requires,
     keywords=["django", "django cms", "cms", "forms"],
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],

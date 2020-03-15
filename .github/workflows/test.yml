@@ -69,4 +69,4 @@ jobs:
 
       - name: Upload to pypi
         run: |
-          twine upload --repository-url https://test.pypi.org/legacy/ -u __token__ -p ${{ secrets.TEST_PYPI_TKOEN }} dist/*
+          twine upload --repository-url https://test.pypi.org/legacy/ -u __token__ -p ${{ secrets.TEST_PYPI_TOKEN }} dist/*
