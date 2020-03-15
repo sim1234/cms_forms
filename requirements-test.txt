@@ -1,4 +1,5 @@
 -r requirements.txt
+-r requirements-build.txt
 
 # examples
 django-environ==0.4.5

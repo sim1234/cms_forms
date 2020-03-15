@@ -1,6 +1,6 @@
-name: CI CD pipeline
+name: Test pipeline
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -20,7 +20,7 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        flake8 --max-line-length 120 --ignore W503,E231 .
+        flake8 .
 
     - name: Check with black
       run: |
@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-test.txt
+          pip install -r requirements-build.txt
 
       - name: Build
         run: |

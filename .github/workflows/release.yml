@@ -1,0 +1,49 @@
+name: Release pipeline
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Get tag
+        id: tag
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-build.txt
+
+      - name: Build
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Upload source release
+        uses: actions/upload-artifact@v1
+        with:
+          name: cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          path: releases/cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+
+      - name: Upload wheel release
+        uses: actions/upload-artifact@v1
+        with:
+          name: cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+          path: dist/cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+
+      - name: Upload to pypi
+        run: |
+          twine upload --repository-url https://pypi.org/legacy/ -u __token__ -p ${{ secrets.PYPI_TKOEN }} dist/*
