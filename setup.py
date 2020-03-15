@@ -17,7 +17,7 @@ with open("requirements.txt") as f:
 
 
 setuptools.setup(
-    name="cms_forms",
+    name="django_cms_forms",
     version=version,
     author="Szymon Zmilczak",
     author_email="szymon.zmilczak@gmail.com",
@@ -34,9 +34,14 @@ setuptools.setup(
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Framework :: Django",
+        "Framework :: Django :: 2.2",
+        "Framework :: Django CMS",
+        "Natural Language :: English",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],

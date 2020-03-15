@@ -33,15 +33,15 @@ jobs:
       - name: Upload source release
         uses: actions/upload-artifact@v1
         with:
-          name: cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
-          path: dist/cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          name: django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
 
       - name: Upload wheel release
         uses: actions/upload-artifact@v1
         with:
-          name: cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
-          path: dist/cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+          name: django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+          path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
 
       - name: Upload to pypi
         run: |
-          twine upload --repository-url https://pypi.org/legacy/ -u __token__ -p ${{ secrets.PYPI_TKOEN }} dist/*
+          twine upload -u __token__ -p ${{ secrets.PYPI_TKOEN }} dist/*
