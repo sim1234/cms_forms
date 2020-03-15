@@ -104,3 +104,12 @@ CMS_CACHE_DURATIONS = {
     "menus": 60 * 60,
     "permissions": 60 * 60,
 }
+
+# You can customize registered form plugins
+from cms_forms import defaults as forms_defaults  # noqa
+
+CMS_FORM_PLUGINS = forms_defaults.FORM_PLUGINS + []
+CMS_FIELD_PLUGINS = forms_defaults.FIELD_PLUGINS + []
+CMS_WIDGET_PLUGINS = forms_defaults.WIDGET_PLUGINS + []
+CMS_CHOICE_OPTION_PLUGINS = forms_defaults.CHOICE_OPTION_PLUGINS + []
+CMS_CHOICE_FIELD_PLUGINS = forms_defaults.CHOICE_FIELD_PLUGINS + []
