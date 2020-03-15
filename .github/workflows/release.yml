@@ -11,6 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Get tag
+        id: tag
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
@@ -21,10 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-build.txt
 
-      - name: Build
-        run: |
-          python setup.py sdist bdist_wheel
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -32,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ steps.tag.outputs.tag }}
           draft: false
           prerelease: false
 
@@ -42,8 +43,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/django_cms_forms-${{ github.ref }}.tar.gz
-          asset_name: django_cms_forms-${{ github.ref }}.tar.gz
+          asset_path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
+          asset_name: django_cms_forms-${{ steps.tag.outputs.tag }}.tar.gz
           asset_content_type: application/gzip
 
       - name: Upload wheel release
@@ -52,8 +53,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/django_cms_forms-${{ github.ref }}-py3-none-any.whl
-          asset_name: django_cms_forms-${{ github.ref }}-py3-none-any.whl
+          asset_path: dist/django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
+          asset_name: django_cms_forms-${{ steps.tag.outputs.tag }}-py3-none-any.whl
           asset_content_type: application/zip
 
       - name: Upload to pypi
