@@ -11,78 +11,143 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('cms', '0022_auto_20180620_1551'),
+        ("cms", "0022_auto_20180620_1551"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ChoiceOption',
+            name="ChoiceOption",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_choiceoption', serialize=False, to='cms.CMSPlugin')),
-                ('value', models.CharField(blank=True, default='', max_length=255)),
-                ('display', models.TextField(blank=True, default='')),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_choiceoption",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("value", models.CharField(blank=True, default="", max_length=255)),
+                ("display", models.TextField(blank=True, default="")),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
-            name='Form',
+            name="Form",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_form', serialize=False, to='cms.CMSPlugin')),
-                ('name', models.CharField(max_length=255)),
-                ('form_type', cms_forms.fields.TypeReferenceField(default=cms_forms.importer.TypeReference('django.forms.forms.Form'), max_length=255)),
-                ('meta_parameters', cms_forms.fields.JSONField(blank=True, default=dict)),
-                ('auto_render_fields', models.BooleanField(default=False)),
-                ('load', models.CharField(choices=[('static', 'Render normally'), ('lazy', 'Render empty and load after the page is loaded'), ('reload', 'Render normally and reload after the page is loaded')], default='reload', max_length=255)),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_form",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "form_type",
+                    cms_forms.fields.TypeReferenceField(
+                        default=cms_forms.importer.TypeReference("django.forms.forms.Form"), max_length=255
+                    ),
+                ),
+                ("meta_parameters", cms_forms.fields.JSONField(blank=True, default=dict)),
+                ("auto_render_fields", models.BooleanField(default=False)),
+                (
+                    "load",
+                    models.CharField(
+                        choices=[
+                            ("static", "Render normally"),
+                            ("lazy", "Render empty and load after the page is loaded"),
+                            ("reload", "Render normally and reload after the page is loaded"),
+                        ],
+                        default="reload",
+                        max_length=255,
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
-            name='FormField',
+            name="FormField",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_formfield', serialize=False, to='cms.CMSPlugin')),
-                ('name', models.CharField(max_length=255)),
-                ('field_type', cms_forms.fields.TypeReferenceField(default=cms_forms.importer.TypeReference('django.forms.fields.Field'), max_length=255)),
-                ('field_parameters', cms_forms.fields.JSONField(blank=True, default=dict)),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_formfield",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "field_type",
+                    cms_forms.fields.TypeReferenceField(
+                        default=cms_forms.importer.TypeReference("django.forms.fields.Field"), max_length=255
+                    ),
+                ),
+                ("field_parameters", cms_forms.fields.JSONField(blank=True, default=dict)),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
-            name='FormSubmission',
+            name="FormSubmission",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('form_name', models.CharField(max_length=255)),
-                ('data', cms_forms.fields.JSONField(blank=True, default=dict)),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("form_name", models.CharField(max_length=255)),
+                ("data", cms_forms.fields.JSONField(blank=True, default=dict)),
+                ("created", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='FormWidget',
+            name="FormWidget",
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='cms_forms_formwidget', serialize=False, to='cms.CMSPlugin')),
-                ('widget_type', cms_forms.fields.TypeReferenceField(default=cms_forms.importer.TypeReference('django.forms.widgets.Widget'), max_length=255)),
-                ('widget_parameters', cms_forms.fields.JSONField(blank=True, default=dict)),
+                (
+                    "cmsplugin_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        related_name="cms_forms_formwidget",
+                        serialize=False,
+                        to="cms.CMSPlugin",
+                    ),
+                ),
+                (
+                    "widget_type",
+                    cms_forms.fields.TypeReferenceField(
+                        default=cms_forms.importer.TypeReference("django.forms.widgets.Widget"), max_length=255
+                    ),
+                ),
+                ("widget_parameters", cms_forms.fields.JSONField(blank=True, default=dict)),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('cms.cmsplugin',),
+            options={"abstract": False,},
+            bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
-            name='FormSubmissionFile',
+            name="FormSubmissionFile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('field_name', models.CharField(max_length=255)),
-                ('file', models.FileField(upload_to='cms_forms/')),
-                ('submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cms_forms.FormSubmission')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("field_name", models.CharField(max_length=255)),
+                ("file", models.FileField(upload_to="cms_forms/")),
+                (
+                    "submission",
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="cms_forms.FormSubmission"),
+                ),
             ],
         ),
     ]

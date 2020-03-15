@@ -134,3 +134,6 @@ ENV/
 
 # MacOS
 .DS_Store
+
+# custom files
+examples/*/shared/*
