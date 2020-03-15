@@ -97,7 +97,7 @@ class FormWidget(CMSPlugin):
         return self.widget_type.type(**self.widget_parameters)
 
     def __str__(self):
-        return ""
+        return self.widget_type.str.split(".")[-1]
 
 
 class ChoiceOption(CMSPlugin):
@@ -112,3 +112,15 @@ class FormSubmission(models.Model):
     form_name = models.CharField(max_length=255)
     data = JSONField(default=dict, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.form_name
+
+
+class FormSubmissionFile(models.Model):
+    submission = models.ForeignKey(FormSubmission, on_delete=models.CASCADE)
+    field_name = models.CharField(max_length=255)
+    file = models.FileField(upload_to="cms_forms/")
+
+    def __str__(self):
+        return self.field_name

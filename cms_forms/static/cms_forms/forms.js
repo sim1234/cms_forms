@@ -18,13 +18,11 @@ function submitCMSForm(form, method){
         method: method,
         cache: 'no-cache',
         credentials: 'same-origin',
-        redirect: "manual",
         headers: {
             "X-CSRFToken": getCookie("csrftoken"),
         },
     };
     if (method === "POST") {
-        // TODO: get submit button via let submit = document.activeElement;
         params["body"] = new FormData(form);
     }
     fetch(form.action, params).then(response => {
@@ -32,9 +30,9 @@ function submitCMSForm(form, method){
             window.location.href = response.url;
         } else if (response.ok) {
             response.text().then(text => {
+                let old_files = [...form.querySelectorAll("input[type=file]")];
                 form.innerHTML = text;
-                // TODO: Update file fields
-                [...form.getElementsByTagName("script")].forEach(function (value) { // Execute scripts
+                [...form.getElementsByTagName("script")].forEach((value) => { // Execute scripts
                     value.remove();
                     const newScript = document.createElement("script");
                     if (value.src) {
@@ -42,10 +40,14 @@ function submitCMSForm(form, method){
                     }
                     newScript.appendChild(document.createTextNode(value.innerHTML));
                     form.appendChild(newScript);
-                })
+                });
+                [...form.querySelectorAll("input[type=file]")].forEach((value, index) => { // Update file inputs
+                    value.insertAdjacentElement("beforebegin", old_files[index]);
+                    value.remove();
+                });
             })
         } else {
             console.error(response);
         }
-    })
+    });
 }

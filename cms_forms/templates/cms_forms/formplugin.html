@@ -1,13 +1,21 @@
 {% load cms_tags sekizai_tags static %}
-{% addtoblock "js" %}<script type="text/javascript" src="{% static "cms_forms/forms.js" %}"></script>{% endaddtoblock %}
-{% addtoblock "js" %}{% if instance.load != "static" %}<script>
-    window.addEventListener('load', (event) => {
-        submitCMSForm(document.getElementById("cms_form-{{ instance.pk }}"), 'GET');
-    });
-</script>{% endif %}{% endaddtoblock %}
-
 {% if not instance.render_inner_only %}
-    <form action="{% url "form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');">
+    {% addtoblock "js" %}<script type="text/javascript" src="{% static "cms_forms/forms.js" %}"></script>{% endaddtoblock %}
+    {% if instance.load != "static" %}{% addtoblock "js" %}
+    <script>
+        window.addEventListener('load', (event) => {
+            submitCMSForm(document.getElementById("cms_form-{{ instance.pk }}"), 'GET');
+        });
+    </script>
+    {% endaddtoblock %}{% endif %}
+    {% for js_media in instance.form.media.render_js %}
+        {% addtoblock "js" %}{{ js_media }}{% endaddtoblock %}
+    {% endfor %}
+    {% for css_media in instance.form.media.render_css %}
+        {% addtoblock "css" %}{{ css_media }}{% endaddtoblock %}
+    {% endfor %}
+
+    <form action="{% url "cms_forms.form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');">
 {% endif %}
 
 {% if instance.load != "lazy" or instance.render_inner_only %}

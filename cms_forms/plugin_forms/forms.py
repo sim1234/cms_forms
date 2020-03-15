@@ -76,5 +76,9 @@ class ModelFormForm(BaseModelFormForm):
         return super().load_meta_kwargs()
 
 
-class SavingFormForm(FormForm):
+class SavingFormForm(BaseModelFormForm):
     form_type = TypeReference(SavingForm)
+    meta_parameters = ["success_url", "success_content"]
+
+    success_url = forms.CharField(required=False)
+    success_content = forms.CharField(required=False, widget=forms.Textarea)
