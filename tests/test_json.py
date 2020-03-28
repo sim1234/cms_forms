@@ -3,6 +3,8 @@ import decimal
 import json
 import uuid
 
+import pytest
+
 from cms_forms.importer import TypeReference
 from cms_forms.json import CustomJSONEncoder, CustomJSONDecoder
 
@@ -70,11 +72,8 @@ def test_json_encoder():
     res = json.dumps(example_data, cls=CustomJSONEncoder)
     assert res == example_data_str_clean
     assert json.dumps([1], cls=CustomJSONEncoder) == "[1]"
-    try:
+    with pytest.raises(TypeError):
         json.dumps([MyClass()], cls=CustomJSONEncoder)
-        assert False
-    except TypeError:
-        assert True
 
 
 def test_json_decoder():
