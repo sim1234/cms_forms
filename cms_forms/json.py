@@ -9,13 +9,22 @@ from .importer import TypeReference
 class CustomJSONDecoder(json.JSONDecoder):
     def raw_decode(self, s, idx=0):
         obj, end = super().raw_decode(s, idx)
-        if isinstance(obj, dict):
-            return self.decode_dict(obj), end
+        obj = self.decode_any(obj)
         return obj, end
 
-    def decode_dict(self, o: dict):
-        if set(o.keys()) == {"__type__", "__value__"}:
-            type_, value = o["__type__"], o["__value__"]
+    def decode_any(self, obj):
+        if isinstance(obj, dict):
+            return self.decode_dict(obj)
+        if isinstance(obj, list):
+            return self.decode_list(obj)
+        return obj
+
+    def decode_list(self, obj: list):
+        return [self.decode_any(o) for o in obj]
+
+    def decode_dict(self, obj: dict):
+        if set(obj.keys()) == {"__type__", "__value__"}:
+            type_, value = obj["__type__"], obj["__value__"]
             if type_ == "datetime":
                 return datetime.datetime.fromisoformat(value)
             elif type_ == "date":
@@ -33,10 +42,7 @@ class CustomJSONDecoder(json.JSONDecoder):
             elif type_ == "type":
                 return TypeReference(value).type
 
-        for key, value in o.items():
-            if isinstance(value, dict):
-                o[key] = self.decode_dict(value)
-        return o
+        return {key: self.decode_any(value) for key, value in obj.items()}
 
 
 class CustomJSONEncoder(json.JSONEncoder):
