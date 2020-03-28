@@ -44,7 +44,9 @@ jobs:
 
       - name: Run tests
         run: |
-          DJANGO_SETTINGS_MODULE=examples.installation.settings pytest --cov cms_forms tests
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
+          export DJANGO_SETTINGS_MODULE=installation.settings
+          pytest --cov cms_forms tests
 
   publish:
     needs: test

@@ -84,7 +84,7 @@ MEDIA_URL = "/media/"
 STATIC_ROOT = str(BASE_DIR("shared/static/"))
 STATIC_URL = "/static/"
 
-ROOT_URLCONF = "urls"
+ROOT_URLCONF = "installation.urls"
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR("shared/db.sqlite3"),}}
 
