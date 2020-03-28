@@ -1,3 +1,5 @@
+import os
+
 import setuptools
 
 with open("README.md", "r") as f:
@@ -10,6 +12,10 @@ with open("cms_forms/__init__.py", "r") as f:
             break
     else:
         version = "0.0.1"
+
+    patch = os.environ.get("PATCH_VERSION")
+    if patch:
+        version = f"{version}.{patch}"
 
 with open("requirements.txt") as f:
     _requirements = [line.split("#")[0].strip() for line in f]

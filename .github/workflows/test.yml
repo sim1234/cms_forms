@@ -67,6 +67,7 @@ jobs:
 
       - name: Build
         run: |
+          export PATCH_VERSION=$(git rev-list --count HEAD).$(date +%s)
           python setup.py sdist bdist_wheel
 
       - name: Upload to pypi
