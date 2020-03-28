@@ -1,11 +1,16 @@
+import logging
+
 from django.db import models
-from django.forms import widgets
-from django.utils.translation import gettext_lazy as _
+from django.forms import widgets, fields
 
 from cms.models.pluginmodel import CMSPlugin
 
 from .fields import JSONField, TypeReferenceField
 from .importer import TypeReference
+from .enums import LoadEnum
+
+
+logger = logging.getLogger(__name__)
 
 
 class Form(CMSPlugin):
@@ -14,13 +19,7 @@ class Form(CMSPlugin):
     meta_parameters = JSONField(default=dict, blank=True)
     auto_render_fields = models.BooleanField(default=False)
     load = models.CharField(
-        max_length=255,
-        choices=(
-            ("static", _("Render normally")),
-            ("lazy", _("Render empty and load after the page is loaded")),
-            ("reload", _("Render normally and reload after the page is loaded")),
-        ),
-        default="reload",
+        max_length=255, choices=[(e.name, e.value) for e in LoadEnum], default=LoadEnum.RELOAD.name,
     )
 
     _fields = None
@@ -30,7 +29,7 @@ class Form(CMSPlugin):
     @property
     def fields(self):
         if self._fields is None:
-            self._fields = list(self.get_form_fields(self))
+            self._fields = list(self._get_form_fields(self))
         return self._fields
 
     @property
@@ -43,13 +42,21 @@ class Form(CMSPlugin):
     def form(self, value):
         self._form = value
 
+    @property
+    def is_lazy(self):
+        return self.load == LoadEnum.LAZY.name
+
+    @property
+    def is_static(self):
+        return self.load == LoadEnum.STATIC.name
+
     @classmethod
-    def get_form_fields(cls, plugin):
+    def _get_form_fields(cls, plugin):
         for plugin in plugin.child_plugin_instances or ():
             if isinstance(plugin, FormField):
                 yield plugin
             else:
-                yield from cls.get_form_fields(plugin)
+                yield from cls._get_form_fields(plugin)
 
     def get_child_plugin_instances(self):  # rendering hook
         self.init_fields()
@@ -79,13 +86,17 @@ class FormField(CMSPlugin):
     bound_field = None
 
     def build_field(self):
+        field_cls = self.field_type.type
         kwargs = self.field_parameters.copy()
         for plugin in self.child_plugin_instances or ():
             if isinstance(plugin, FormWidget):
                 kwargs["widget"] = plugin.build_widget()
             elif isinstance(plugin, ChoiceOption):
-                kwargs.setdefault("choices", []).append((plugin.value, plugin.display))
-        return self.field_type.type(**kwargs)
+                if issubclass(field_cls, fields.ChoiceField):
+                    kwargs.setdefault("choices", []).append((plugin.value, plugin.display))
+                else:
+                    logger.warning(f"Choices added to not choice field ignored in field {self.pk}")
+        return field_cls(**kwargs)
 
     def __str__(self):
         return self.name
@@ -118,7 +129,7 @@ class FormButton(CMSPlugin):
     def __str__(self):
         return self.name
 
-    def build(self):
+    def render_button(self):
         return widgets.Input({"type": self.input_type}).render(self.name, self.value)
 
 

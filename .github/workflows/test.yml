@@ -44,7 +44,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov cms_forms tests
+          DJANGO_SETTINGS_MODULE=examples.installation.settings pytest --cov cms_forms tests
 
   publish:
     needs: test

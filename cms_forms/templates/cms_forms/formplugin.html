@@ -1,7 +1,7 @@
 {% load cms_tags sekizai_tags static %}
 {% if not instance.render_inner_only %}
     {% addtoblock "js" %}<script type="text/javascript" src="{% static "cms_forms/forms.js" %}"></script>{% endaddtoblock %}
-    {% if instance.load != "static" %}{% addtoblock "js" %}
+    {% if not instance.is_static %}{% addtoblock "js" %}
     <script>
         window.addEventListener('load', (event) => {
             submitCMSForm(document.getElementById("cms_form-{{ instance.pk }}"), 'GET');
@@ -18,7 +18,7 @@
     <form action="{% url "cms_forms.form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');">
 {% endif %}
 
-{% if instance.load != "lazy" or instance.render_inner_only %}
+{% if instance.render_inner_only or not instance.is_lazy%}
     {{ instance.form.non_field_errors }}
    {% if instance.auto_render_fields %}
         {% for field in instance.form %}

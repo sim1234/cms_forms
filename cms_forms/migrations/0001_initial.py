@@ -64,11 +64,11 @@ class Migration(migrations.Migration):
                     "load",
                     models.CharField(
                         choices=[
-                            ("static", "Render normally"),
-                            ("lazy", "Render empty and load after the page is loaded"),
-                            ("reload", "Render normally and reload after the page is loaded"),
+                            ("STATIC", "Render normally"),
+                            ("LAZY", "Render empty and load after the page is loaded"),
+                            ("RELOAD", "Render normally and reload after the page is loaded"),
                         ],
-                        default="reload",
+                        default="RELOAD",
                         max_length=255,
                     ),
                 ),
