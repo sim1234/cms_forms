@@ -18,6 +18,9 @@ class TypeReference:
     def __repr__(self):
         return f"{self.__class__.__qualname__}({self.str!r})"
 
+    def __eq__(self, other):
+        return self.str == TypeReference(other).str
+
     def __str__(self):
         return self.str
 
