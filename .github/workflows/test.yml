@@ -46,7 +46,14 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
           export DJANGO_SETTINGS_MODULE=installation.settings
-          pytest --cov cms_forms tests
+          pytest --cov cms_forms tests --cov-report xml
+
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
 
   publish:
     needs: test
