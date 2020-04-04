@@ -181,7 +181,7 @@ class MultiWidgetForm(WidgetForm):
 
 class SplitDateTimeWidgetForm(MultiWidgetForm):
     widget_type = TypeReference(widgets.SplitDateTimeWidget)
-    widget_parameters = MultiWidgetForm.attrs_parameters + ["date_format", "time_format", "date_attrs", "time_attrs"]
+    widget_parameters = MultiWidgetForm.widget_parameters + ["date_format", "time_format", "date_attrs", "time_attrs"]
 
     date_format = forms.CharField(required=False)
     time_format = forms.CharField(required=False)

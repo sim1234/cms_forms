@@ -76,22 +76,22 @@ class TextareaPlugin(WidgetPlugin):
     form = widgets.TextareaForm
 
 
-class DateTimeBaseInputForm(InputPlugin):
+class DateTimeBaseInput(InputPlugin):
     name = _("Datetime base input")
     form = widgets.DateTimeBaseInputForm
 
 
-class DateInputPlugin(DateTimeBaseInputForm):
+class DateInputPlugin(DateTimeBaseInput):
     name = _("Date input")
     form = widgets.DateInputForm
 
 
-class DateTimeInputPlugin(DateTimeBaseInputForm):
+class DateTimeInputPlugin(DateTimeBaseInput):
     name = _("DateTime input")
     form = widgets.DateTimeInputForm
 
 
-class TimeInputPlugin(DateTimeBaseInputForm):
+class TimeInputPlugin(DateTimeBaseInput):
     name = _("Time input")
     form = widgets.TimeInputForm
 

@@ -46,7 +46,6 @@ WIDGET_PLUGINS = [
     "cms_forms.plugins.widgets.FileInputPlugin",
     "cms_forms.plugins.widgets.ClearableFileInputPlugin",
     "cms_forms.plugins.widgets.TextareaPlugin",
-    "cms_forms.plugins.widgets.DateTimeBaseInputForm",
     "cms_forms.plugins.widgets.DateInputPlugin",
     "cms_forms.plugins.widgets.DateTimeInputPlugin",
     "cms_forms.plugins.widgets.TimeInputPlugin",
