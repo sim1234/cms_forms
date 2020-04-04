@@ -9,7 +9,7 @@ class BaseForm(forms.Form):
     """Interface for custom forms"""
 
     def cms_save(self, request, plugin):
-        return getattr(self, "safe", lambda: None)()
+        return getattr(self, "save", lambda: None)()
 
 
 class SavingForm(BaseForm):

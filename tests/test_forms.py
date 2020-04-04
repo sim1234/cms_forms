@@ -1,13 +1,20 @@
 from cms.test_utils.testcases import CMSTestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from cms_forms.forms import SavingForm
+from cms_forms.forms import SavingForm, BaseForm
 from cms_forms.importer import TypeReference
 from cms_forms.models import FormSubmission, FormSubmissionFile
 from cms_forms.plugins.fields import FormFieldPlugin
 from cms_forms.plugins.forms import FormPlugin
 
 from tests.test_views import build_plugin, safe_register
+
+
+class MyForm(BaseForm):
+    saved = False
+
+    def save(self):
+        self.saved = True
 
 
 class FormsTestCase(CMSTestCase):
@@ -57,3 +64,10 @@ class FormsTestCase(CMSTestCase):
         assert submission_file.submission == submission
         assert submission_file.field_name == "field2"
         assert submission_file.file.read() == b"content"
+
+    def test_base_form(self):
+        form = MyForm({})
+        assert form.is_valid()
+        assert not form.saved
+        form.cms_save(None, None)
+        assert form.saved
