@@ -1,11 +1,8 @@
 import pytest
 
-from cms.models import Page
-from cms.test_utils.testcases import CMSTestCase
 from django import forms
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
-from django.test import RequestFactory
 
 from cms_forms.forms import BaseForm
 from cms_forms.importer import TypeReference
@@ -14,7 +11,7 @@ from cms_forms.plugins.fields import FormFieldPlugin
 from cms_forms.views import get_plugin, render_plugin, BaseFormSubmissionView
 from cms_forms.models import Form
 
-from tests.utils import safe_register, build_plugin, clean_html
+from tests.utils import PluginTestCase, safe_register, build_plugin, clean_html
 
 
 class RedirectingForm(BaseForm):
@@ -29,21 +26,12 @@ class SuccessForm(BaseForm):
         return HttpResponse("Success!")
 
 
-class ViewsTestCase(CMSTestCase):
+class ViewsTestCase(PluginTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         safe_register(FormPlugin)
         safe_register(FormFieldPlugin)
-
-    def setUp(self):
-        super().setUp()
-        self.factory = RequestFactory()
-
-    def cms_request(self, method="get", **kwargs):
-        request = getattr(self.factory, method)("/", **kwargs)
-        request.current_page = Page()
-        return request
 
     def test_get_plugin(self):
         form = build_plugin(FormPlugin, name="test")

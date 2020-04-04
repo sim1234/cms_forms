@@ -47,8 +47,8 @@ class FormPluginTestCase(PluginTestCase):
                 "name": "test",
                 "load": LoadEnum.RELOAD.name,
                 "auto_render_fields": True,
-                "form_type": TypeReference(form_cls),
-                "meta_parameters": {},
+                "form_type": TypeReference(form_cls),  # not always set but checked
+                "meta_parameters": {},  # not always set but checked
             }
 
         plugin = self._check_plugin(
@@ -62,17 +62,14 @@ class FormPluginTestCase(PluginTestCase):
         assert isinstance(frm, form_cls)
         assert frm.is_valid(), frm.errors
 
-        return plugin, frm
+        content = self.render_plugin_instance(plugin_cls, plugin)
+        assert "<form" in content
+
+        return plugin, frm, content
 
     def test_base_form_plugin(self):
-        creation_form = BaseFormPlugin.form(
-            {
-                "name": "test",
-                "load": LoadEnum.RELOAD.name,
-                "auto_render_fields": True,
-                "form_type": TypeReference(FailingForm),
-            }
-        )
+        creation_form = BaseFormPlugin.form({"name": "test", "load": LoadEnum.RELOAD.name, "auto_render_fields": True,})
+        creation_form.form_type = TypeReference(FailingForm)
         assert not creation_form.is_valid()
 
     def test_form_plugin(self):
@@ -82,25 +79,40 @@ class FormPluginTestCase(PluginTestCase):
 
     def test_model_form_plugin(self):
         # Using ChoiceOption model as it already exists in the database
-        self._check_form_plugin(
+        _, _, content = self._check_form_plugin(
             plugin_cls=ModelFormPlugin,
             form_cls=forms.ModelForm,
             creation_data={"model": TypeReference(ChoiceOption).str, "fields": "__all__", "exclude": None},
             expected_data={"meta_parameters": {"model": ChoiceOption, "fields": "__all__", "exclude": None}},
         )
-        Form.objects.all().delete()
-        self._check_form_plugin(
+        assert 'name="value"' in content
+        assert 'name="display"' in content
+
+        _, _, content = self._check_form_plugin(
             plugin_cls=ModelFormPlugin,
             form_cls=forms.ModelForm,
             creation_data={"model": TypeReference(ChoiceOption).str, "fields": None, "exclude": "value"},
             expected_data={"meta_parameters": {"model": ChoiceOption, "fields": None, "exclude": ["value"]}},
         )
+        assert 'name="value"' not in content
+        assert 'name="display"' in content
 
     def test_custom_plugin(self):
-        self._check_form_plugin(
+        plugin, _, content = self._check_form_plugin(
             plugin_cls=MyFormPlugin,
             form_cls=MyForm,
             creation_data={"extra_field": "test2"},
             expected_data={"meta_parameters": {"extra_field": "test2"}},
             form_data={"field1": "test3"},
         )
+        assert 'name="field1"' in content
+
+        plugin.load = LoadEnum.STATIC.name
+        plugin.save()
+        content = self.render_plugin_instance(MyFormPlugin, plugin)
+        assert 'name="field1"' in content
+
+        plugin.load = LoadEnum.LAZY.name
+        plugin.save()
+        content = self.render_plugin_instance(MyFormPlugin, plugin)
+        assert 'name="field1"' not in content
