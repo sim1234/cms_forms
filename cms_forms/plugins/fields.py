@@ -66,7 +66,7 @@ class DecimalFieldPlugin(IntegerFieldPlugin):
 
 
 class BaseTemporalFieldPlugin(FormFieldPlugin):
-    pass
+    form = fields.BaseTemporalFieldForm
 
 
 class DateFieldPlugin(BaseTemporalFieldPlugin):

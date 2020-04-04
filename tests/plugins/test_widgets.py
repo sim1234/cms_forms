@@ -102,6 +102,8 @@ class WidgetPluginTestCase(PluginTestCase):
         assert isinstance(frm.fields["field1"].widget, forms.Textarea)
         assert frm.is_valid(), frm.errors
 
+        assert WidgetPlugin(WidgetPlugin).render(context={}, instance=widget, placeholder=None)
+
         self._check_widget_plugin(
             plugin_cls=WidgetPlugin, widget_cls=widgets.Widget, creation_data={}, expected_data={}
         )

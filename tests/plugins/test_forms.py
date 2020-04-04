@@ -27,7 +27,7 @@ class MyFormPlugin(BaseFormPlugin):
 class FailingForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        raise RuntimeError("Failed to create form")
+        raise RuntimeError("Failed to create form (xkcd-fail)")
 
 
 class FormPluginTestCase(PluginTestCase):
@@ -71,6 +71,7 @@ class FormPluginTestCase(PluginTestCase):
         creation_form = BaseFormPlugin.form({"name": "test", "load": LoadEnum.RELOAD.name, "auto_render_fields": True,})
         creation_form.form_type = TypeReference(FailingForm)
         assert not creation_form.is_valid()
+        assert "Failed to create form (xkcd-fail)" in creation_form.errors["__all__"][0]
 
     def test_form_plugin(self):
         self._check_form_plugin(
