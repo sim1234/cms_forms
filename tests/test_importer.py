@@ -33,6 +33,8 @@ def test_type_reference():
     assert str(tr3) == "cms_forms.importer.TypeReference"
     assert tr1 != tr3
     assert tr1 != None  # noqa
+    assert tr1 != "broken.import.path"
+    assert tr1 != "os.broken_attr"
     assert repr(tr1)
     assert len(tr1)
     assert tr3.deconstruct() == ("cms_forms.importer.TypeReference", ["cms_forms.importer.TypeReference"], {})

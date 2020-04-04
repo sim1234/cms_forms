@@ -19,7 +19,13 @@ class TypeReference:
         return f"{self.__class__.__qualname__}({self.str!r})"
 
     def __eq__(self, other):
-        return other and self.str == TypeReference(other).str
+        if not other:
+            return False
+        try:
+            other_tr = TypeReference(other)
+        except ImportError:
+            return False
+        return self.str == other_tr.str
 
     def __str__(self):
         return self.str

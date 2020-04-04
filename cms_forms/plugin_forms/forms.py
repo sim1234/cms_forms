@@ -39,16 +39,15 @@ class BaseModelFormForm(FormForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.load_meta_kwargs()
+        self.load_meta_kwargs(self.instance.meta_parameters.copy())
 
-    def load_meta_kwargs(self):
-        kwargs = self.instance.meta_parameters
+    def load_meta_kwargs(self, kwargs):
         for param in self.meta_parameters:
             field = self.fields[param]
             field.initial = kwargs.get(param, field.initial)
 
     def get_meta_kwargs(self):
-        return {param: self.cleaned_data[param] for param in self.meta_parameters}
+        return {param: self.cleaned_data[param] for param in self.meta_parameters if param in self.cleaned_data}
 
     def update_instance(self):
         self.instance.meta_parameters = self.get_meta_kwargs()
@@ -57,24 +56,41 @@ class BaseModelFormForm(FormForm):
 
 class ModelFormForm(BaseModelFormForm):
     form_type = TypeReference(forms.ModelForm)
-    meta_parameters = ["fields", "exclude"]
+    meta_parameters = ["model", "fields", "exclude"]
 
-    model = forms.TypedChoiceField(coerce=TypeReference)
+    model = forms.ChoiceField()
     fields = forms.CharField(required=False, empty_value=None, initial="__all__")
     exclude = forms.CharField(required=False, empty_value=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["model"].choices = [(TypeReference(model), TypeReference(model).str) for model in apps.get_models()]
+        self.fields["model"].choices = [
+            (TypeReference(model).str, TypeReference(model).str) for model in apps.get_models()
+        ]
+
+    @staticmethod
+    def split_fields(fields):
+        if fields == "__all__" or fields is None:
+            return fields
+        return fields.split(",")
 
     def get_meta_kwargs(self):
         kwargs = super().get_meta_kwargs()
-        kwargs["model"] = self.cleaned_data["model"].type
+        kwargs["model"] = TypeReference(self.cleaned_data["model"]).type
+        fields = kwargs["fields"]
+        kwargs["fields"] = self.split_fields(fields)
+        exclude = kwargs["exclude"]
+        kwargs["exclude"] = self.split_fields(exclude)
         return kwargs
 
-    def load_meta_kwargs(self):
-        self.fields["model"].initial = self.instance.meta_parameters.get("model", self.fields["model"].initial)
-        return super().load_meta_kwargs()
+    def load_meta_kwargs(self, kwargs):
+        model = kwargs.pop("model", None)
+        kwargs["model"] = TypeReference(model).str if model else None
+        fields = kwargs.pop("fields", "__all__")
+        kwargs["fields"] = ",".join(fields) if isinstance(fields, list) else fields
+        exclude = kwargs.pop("exclude", None)
+        kwargs["exclude"] = ",".join(exclude) if isinstance(exclude, list) else exclude
+        return super().load_meta_kwargs(kwargs)
 
 
 class SavingFormForm(BaseModelFormForm):

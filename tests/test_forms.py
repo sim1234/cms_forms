@@ -7,7 +7,7 @@ from cms_forms.models import FormSubmission, FormSubmissionFile
 from cms_forms.plugins.fields import FormFieldPlugin
 from cms_forms.plugins.forms import FormPlugin
 
-from tests.test_views import build_plugin, safe_register
+from tests.utils import build_plugin, safe_register
 
 
 class MyForm(BaseForm):
@@ -33,7 +33,7 @@ class FormsTestCase(CMSTestCase):
 
         frm = form.build_form_cls()({"field1": "test1", "other": "stuff"})
         assert isinstance(frm, SavingForm)
-        assert frm.is_valid()
+        assert frm.is_valid(), frm.errors
         response = frm.cms_save(None, form)
         submission = FormSubmission.objects.get()
         assert submission.form_name == "test"
@@ -67,7 +67,7 @@ class FormsTestCase(CMSTestCase):
 
     def test_base_form(self):
         form = MyForm({})
-        assert form.is_valid()
+        assert form.is_valid(), form.errors
         assert not form.saved
         form.cms_save(None, None)
         assert form.saved

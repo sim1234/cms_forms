@@ -1,8 +1,6 @@
 import pytest
 
-from cms.models import Placeholder, Page
-from cms.api import add_plugin
-from cms.plugin_pool import plugin_pool
+from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 from django import forms
 from django.http import Http404, HttpResponse
@@ -16,20 +14,7 @@ from cms_forms.plugins.fields import FormFieldPlugin
 from cms_forms.views import get_plugin, render_plugin, BaseFormSubmissionView
 from cms_forms.models import Form
 
-
-def build_plugin(plugin, parent=None, **kwargs):
-    placeholder, _ = Placeholder.objects.get_or_create(slot="test")
-    return add_plugin(placeholder, plugin, "en-us", target=parent, **kwargs)
-
-
-def clean_html(content: str) -> str:
-    lines = [line.strip() for line in content.split("\n")]
-    return "\n".join([line for line in lines if line])
-
-
-def safe_register(plugin):
-    if plugin.__name__ not in plugin_pool.plugins:
-        plugin_pool.register_plugin(plugin)
+from tests.utils import safe_register, build_plugin, clean_html
 
 
 class RedirectingForm(BaseForm):

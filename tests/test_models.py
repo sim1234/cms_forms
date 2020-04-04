@@ -85,7 +85,7 @@ class ModelsTestCase(CMSTestCase):
         assert not form.is_lazy
         assert not form.is_static
         assert not form.get_child_plugin_instances()
-        assert form.form.is_valid()
+        assert form.form.is_valid(), form.form.errors
         assert isinstance(form.__str__(), str)
 
     def test_field_methods(self):
@@ -144,7 +144,7 @@ class ModelsTestCase(CMSTestCase):
         new_form = form.build_form_cls()({"test1": "a", "test2": "b"})
         form.form = new_form
         assert form.get_child_plugin_instances() == [field1, field2]  # build form
-        assert form.form.is_valid()
+        assert form.form.is_valid(), form.form.errors
         assert field1.form is new_form
         assert field2.form is new_form
         assert field1.bound_field.value() == "a"
