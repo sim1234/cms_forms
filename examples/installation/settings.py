@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     "djangocms_text_ckeditor",
     "djangocms_snippet",
     "djangocms_style",
-    "djangocms_column",
     "cms_forms",
 ]
 
