@@ -106,11 +106,12 @@ CMS_CACHE_DURATIONS = {
 }
 
 # You can customize registered form plugins
-from cms_forms import defaults as forms_defaults  # noqa
+from cms_forms import config_defaults  # noqa
 
-CMS_FORM_PLUGINS = forms_defaults.FORM_PLUGINS[:]
-CMS_FIELD_PLUGINS = forms_defaults.FIELD_PLUGINS[:]
-CMS_WIDGET_PLUGINS = forms_defaults.WIDGET_PLUGINS[:]
-CMS_CHOICE_OPTION_PLUGINS = forms_defaults.CHOICE_OPTION_PLUGINS[:]
-CMS_CHOICE_FIELD_PLUGINS = forms_defaults.CHOICE_FIELD_PLUGINS[:]
-CMS_BUTTON_PLUGINS = forms_defaults.BUTTON_PLUGINS[:]
+CMS_FORMS_REGISTER_PLUGINS = True
+CMS_FORM_PLUGINS = config_defaults.FORM_PLUGINS[:]
+CMS_FIELD_PLUGINS = config_defaults.FIELD_PLUGINS[:]
+CMS_WIDGET_PLUGINS = config_defaults.WIDGET_PLUGINS[:]
+CMS_CHOICE_OPTION_PLUGINS = config_defaults.CHOICE_OPTION_PLUGINS[:]
+CMS_CHOICE_FIELD_PLUGINS = config_defaults.CHOICE_FIELD_PLUGINS[:]
+CMS_BUTTON_PLUGINS = config_defaults.BUTTON_PLUGINS[:]

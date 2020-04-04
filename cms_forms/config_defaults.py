@@ -1,3 +1,5 @@
+FORMS_REGISTER_PLUGINS = True
+
 FORM_PLUGINS = [
     "cms_forms.plugins.forms.FormPlugin",
     "cms_forms.plugins.forms.ModelFormPlugin",

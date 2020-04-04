@@ -3,7 +3,7 @@ INSTALLED_APPS = [
     "contact_form",
 ]
 
-from cms_forms import defaults as forms_defaults  # noqa
+from cms_forms import config_defaults as forms_defaults  # noqa
 
 # Add plugin to this list to have it available in the cms page editor
 CMS_FORM_PLUGINS = forms_defaults.FORM_PLUGINS + ["contact_form.cms_plugins.ContactFormPlugin"]
