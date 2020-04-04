@@ -33,7 +33,7 @@ class ChoicePluginTestCase(PluginTestCase):
         assert frm.fields["field1"].choices == choices
         assert frm.is_valid(), frm.errors
         frm = form_cls({"field1": "3"})
-        assert not frm.is_valid()
+        assert not frm.is_valid(), frm.errors
 
         plugin = self._check_plugin(
             plugin_cls=ChoiceOptionPlugin,

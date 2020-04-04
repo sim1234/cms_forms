@@ -37,6 +37,12 @@ from cms_forms.plugins.forms import FormPlugin
 from tests.utils import build_plugin, safe_register, PluginTestCase
 
 
+class FailingWidget(forms.Widget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        raise RuntimeError("Failed to create widget (xkcd-fail)")
+
+
 class WidgetPluginTestCase(PluginTestCase):
     @classmethod
     def setUpClass(cls):
@@ -89,6 +95,12 @@ class WidgetPluginTestCase(PluginTestCase):
         assert content == ""
 
         return plugin, widget
+
+    def test_widget_form(self):
+        form = WidgetPlugin.form({})
+        form.widget_type = TypeReference(FailingWidget)
+        assert not form.is_valid(), form.errors
+        assert "Failed to create widget (xkcd-fail)" in form.errors["__all__"][0]
 
     def test_widget_plugin(self):
         form = build_plugin(FormPlugin, name="test")

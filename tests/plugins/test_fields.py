@@ -43,6 +43,12 @@ from cms_forms.plugins.forms import FormPlugin
 from tests.utils import build_plugin, safe_register, PluginTestCase
 
 
+class FailingField(forms.Field):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        raise RuntimeError("Failed to create field (xkcd-fail)")
+
+
 class WidgetPluginTestCase(PluginTestCase):
     tzinfo = datetime.timezone(get_current_timezone().utcoffset(datetime.datetime(2020, 1, 1, 1, 2, 3)))
 
@@ -109,8 +115,15 @@ class WidgetPluginTestCase(PluginTestCase):
         assert isinstance(field, field_cls)
 
         content = self.render_plugin_instance(plugin_cls, plugin)
+        assert content
 
         return plugin, field, content
+
+    def test_widget_form(self):
+        form = FormFieldPlugin.form({"name": "test"})
+        form.field_type = TypeReference(FailingField)
+        assert not form.is_valid(), form.errors
+        assert "Failed to create field (xkcd-fail)" in form.errors["__all__"][0]
 
     def test_field_plugin(self):
         form = build_plugin(FormPlugin, name="test")

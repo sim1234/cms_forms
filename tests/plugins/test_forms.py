@@ -67,11 +67,11 @@ class FormPluginTestCase(PluginTestCase):
 
         return plugin, frm, content
 
-    def test_base_form_plugin(self):
-        creation_form = BaseFormPlugin.form({"name": "test", "load": LoadEnum.RELOAD.name, "auto_render_fields": True,})
-        creation_form.form_type = TypeReference(FailingForm)
-        assert not creation_form.is_valid()
-        assert "Failed to create form (xkcd-fail)" in creation_form.errors["__all__"][0]
+    def test_form_form(self):
+        form = BaseFormPlugin.form({"name": "test", "load": LoadEnum.RELOAD.name, "auto_render_fields": True})
+        form.form_type = TypeReference(FailingForm)
+        assert not form.is_valid(), form.errors
+        assert "Failed to create form (xkcd-fail)" in form.errors["__all__"][0]
 
     def test_form_plugin(self):
         self._check_form_plugin(

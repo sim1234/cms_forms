@@ -29,7 +29,7 @@ class ButtonPluginTestCase(PluginTestCase):
 
     def test_base_button_plugin(self):
         creation_form = BaseButtonPlugin.form(self.base_data)
-        assert creation_form.is_valid()
+        assert creation_form.is_valid(), creation_form.errors
 
     def test_button_plugin(self):
         plugin = self._check_plugin(
