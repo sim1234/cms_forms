@@ -11,6 +11,7 @@ django-ckeditor==5.9.0
 djangocms-text-ckeditor==3.9.0
 djangocms-snippet==2.3.0
 djangocms-style==2.3.0
+psycopg2==2.8.5
 
 # test
 pytest==5.4.1
@@ -18,3 +19,4 @@ pytest-cov==2.8.1
 pytest-django==3.9.0
 black==19.10b0
 flake8==3.7.9
+selenium==3.141.0

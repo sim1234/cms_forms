@@ -1,0 +1,53 @@
+version: '3'
+services:
+  hub:
+    image: selenium/hub:3
+
+  chrome:
+    image: selenium/node-chrome:3
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+
+  test:
+    image: cms_forms_app
+    build:
+      context: .
+    depends_on:
+      - chrome
+      - postgres
+    entrypoint: "bash -c \"sleep 4 && python examples/installation/manage.py migrate && python tests/selenium_script.py\""
+    environment:
+      APP_HOST: app.test
+      HUB_HOST: hub
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_ATOMIC: 1
+
+  app.test:
+    image: cms_forms_app
+    build:
+      context: .
+    depends_on:
+      - test
+    entrypoint: "bash -c \"sleep 5 && python examples/installation/manage.py runserver 0.0.0.0:8000 --noreload\""
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_ATOMIC: 1

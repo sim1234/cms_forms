@@ -55,6 +55,10 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
 
+      - name: Run selenium tests
+        run: |
+          docker-compose up --build --abort-on-container-exit
+
   publish:
     needs: test
     runs-on: ubuntu-latest
