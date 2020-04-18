@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from selenium import webdriver
 
 from cms_forms.importer import TypeReference
-from cms_forms.plugins.fields import CharFieldPlugin
+from cms_forms.plugins.fields import CharFieldPlugin, GenericIPAddressFieldPlugin
 from cms_forms.plugins.forms import SavingFormPlugin
 from cms_forms.plugins.buttons import SubmitButtonPlugin
 from cms_forms.models import FormSubmission
@@ -32,6 +32,7 @@ app_url = f"http://{app_host}:{app_port}/"
 # Init CMS objects
 safe_register(SavingFormPlugin)
 safe_register(CharFieldPlugin)
+safe_register(GenericIPAddressFieldPlugin)
 user = get_user_model().objects.create_superuser("admin", "admin@admin.com", "admin")
 page = PluginTestCase.create_homepage(None, title="home", template="base.html", language="en-us", created_by=user,)
 placeholder = page.placeholders.all().first()
@@ -42,13 +43,22 @@ form = add_plugin(
     name="form1",
     form_type=TypeReference("cms_forms.forms.SavingForm"),
 )
-field = add_plugin(
+field1 = add_plugin(
     placeholder=placeholder,
     plugin_type=CharFieldPlugin,
     language="en-us",
     target=form,
     name="field1",
     field_type=TypeReference("django.forms.fields.CharField"),
+    field_parameters={},
+)
+field2 = add_plugin(
+    placeholder=placeholder,
+    plugin_type=GenericIPAddressFieldPlugin,
+    language="en-us",
+    target=form,
+    name="field2",
+    field_type=TypeReference("django.forms.fields.GenericIPAddressField"),
     field_parameters={},
 )
 submit = add_plugin(
@@ -73,19 +83,31 @@ time.sleep(2)  # ensure the server started
 
 # Open pge
 driver.get(app_url)
+time.sleep(1)
 page_source = driver.page_source
 assert driver.current_url == app_url
 assert "submitCMSForm" in page_source, page_source
 assert '<input type="text" name="field1"' in page_source, page_source
 
-# Submit form
+# Submit broken form
 driver.find_element_by_name("field1").send_keys("test_data 1234")
+driver.find_element_by_name("field2").send_keys("8")
+driver.find_element_by_name("submit").click()
+time.sleep(1)
+page_source = driver.page_source
+assert driver.current_url == app_url
+assert FormSubmission.objects.count() == 0
+assert "submitCMSForm" in page_source, page_source
+assert 'value="8"' in page_source, page_source
+
+# Submit complete form
+driver.find_element_by_name("field2").send_keys(".8.8.8")
 driver.find_element_by_name("submit").click()
 time.sleep(1)
 assert driver.current_url == app_url
 submission = FormSubmission.objects.get()
 assert submission.form_name == "form1", submission.form_name
-assert submission.data == {"field1": "test_data 1234"}, submission.data
+assert submission.data == {"field1": "test_data 1234", "field2": "8.8.8.8"}, submission.data
 
 
 # Cleanup
