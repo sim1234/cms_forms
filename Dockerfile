@@ -1,9 +1,7 @@
 FROM python:3.8
 
 COPY requirements* /tmp/
-
 RUN pip install --upgrade pip && pip install --no-cache-dir -r /tmp/requirements-test.txt
-
 
 WORKDIR /opt/cms_forms/
 

@@ -1,3 +1,4 @@
+from .settings import env
 from .settings import *  # noqa
 
 
