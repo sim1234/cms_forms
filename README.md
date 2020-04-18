@@ -48,9 +48,12 @@ Here is a simple guide to development installation of the project:
 git clone https://github.com/sim1234/cms_forms.git && cd cms_forms
 apt-get install python3.8 docker docker-compose  # these are system requirements
 python3.8 -m venv venv && source venv/bin/activate
+export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
+export DJANGO_SETTINGS_MODULE=installation.settings
 pip install -r requirements-test.txt
 flake8 .
 black --line-length 120 .
+pytest --cov cms_forms tests
 docker-compose down && docker volume prune -f && docker-compose up --build --abort-on-container-exit # run selenium tests
 ```
  
