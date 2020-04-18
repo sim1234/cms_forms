@@ -45,7 +45,7 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
-          export DJANGO_SETTINGS_MODULE=installation.settings
+          export DJANGO_SETTINGS_MODULE=installation.settings_test
           pytest --cov cms_forms tests --cov-report xml
 
       - uses: codecov/codecov-action@v1
@@ -54,6 +54,10 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           fail_ci_if_error: true
+
+      - name: Run selenium tests
+        run: |
+          docker-compose up --build --abort-on-container-exit
 
   publish:
     needs: test
