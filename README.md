@@ -2,7 +2,7 @@
 
 ![Test pipeline](https://github.com/sim1234/cms_forms/workflows/Test%20pipeline/badge.svg)
 [![codecov](https://codecov.io/gh/sim1234/cms_forms/branch/master/graph/badge.svg?token=SP8ZN53C11)](https://codecov.io/gh/sim1234/cms_forms)
-[![pypi](http://img.shields.io/pypi/v/cms_forms.svg?style=flat-square)](https://pypi.python.org/pypi/cms_forms/)
+[![pypi](http://img.shields.io/pypi/v/django-cms-forms.svg?style=flat-square)](https://pypi.python.org/pypi/django-cms-forms/)
 
 Source: [https://github.com/sim1234/cms_forms/](https://github.com/sim1234/cms_forms/)
 
