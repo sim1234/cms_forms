@@ -9,7 +9,7 @@ Source: [https://github.com/sim1234/cms_forms/](https://github.com/sim1234/cms_f
 
 ## Installation 
 
- - Install `cms_forms` package.
+ - Install `django-cms-forms` package.
  - Add `cms_forms` to `INSTALLED_APPS` django setting.
  - Add `path("forms/", include("cms_forms.urls"))` to your main url config.
 
