@@ -15,19 +15,21 @@
         {% addtoblock "css" %}{{ css_media }}{% endaddtoblock %}
     {% endfor %}
 
-    <form action="{% url "cms_forms.form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');">
+    <form action="{% url "cms_forms.form_submission" instance.pk %}" method="post" id="cms_form-{{ instance.pk }}" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitCMSForm(this, 'POST');" {% block form_attrs %}{% endblock %}>
 {% endif %}
 
 {% if instance.render_inner_only or not instance.is_lazy%}
-    {{ instance.form.non_field_errors }}
-   {% if instance.auto_render_fields %}
-        {% for field in instance.form %}
-            {% include plugin.auto_render_field_template %}
+    {% block form_body %}
+        {{ instance.form.non_field_errors }}
+        {% if instance.auto_render_fields %}
+            {% for field in instance.form %}
+                {% include plugin.auto_render_field_template %}
+            {% endfor %}
+        {% endif %}
+        {% for plugin in instance.get_child_plugin_instances %}
+            {% render_plugin plugin %}
         {% endfor %}
-    {% endif %}
-    {% for plugin in instance.get_child_plugin_instances %}
-        {% render_plugin plugin %}
-    {% endfor %}
+    {% endblock %}
 {% endif %}
 
 {% if not instance.render_inner_only %}

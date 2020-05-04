@@ -1,0 +1,4 @@
+include LICENSE
+graft cms_forms
+global-exclude __pycache__
+global-exclude *.py[co]
