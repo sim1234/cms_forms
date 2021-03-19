@@ -18,5 +18,5 @@ pytest==6.2.2
 pytest-cov==2.8.1
 pytest-django==3.9.0
 black==19.10b0
-flake8==3.7.9
+flake8==3.9.0
 selenium==3.141.0
