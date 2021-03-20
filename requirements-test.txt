@@ -10,7 +10,7 @@ Pillow==8.1.2
 django-ckeditor==6.0.0
 djangocms-text-ckeditor==4.0.0
 djangocms-snippet==3.0.0
-djangocms-style==2.3.0
+djangocms-style==3.0.0
 psycopg2==2.8.6
 
 # test
