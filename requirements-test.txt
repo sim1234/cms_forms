@@ -11,7 +11,7 @@ django-ckeditor==6.0.0
 djangocms-text-ckeditor==4.0.0
 djangocms-snippet==3.0.0
 djangocms-style==3.0.0
-psycopg2==2.8.6
+psycopg2==2.9.1
 
 # test
 pytest==6.2.2
