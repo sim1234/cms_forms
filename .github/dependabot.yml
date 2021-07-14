@@ -1,0 +1,42 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: black
+    versions:
+    - 21.4b0
+    - 21.4b1
+  - dependency-name: setuptools
+    versions:
+    - 52.0.0
+    - 53.0.0
+    - 53.1.0
+    - 54.0.0
+    - 54.1.1
+    - 54.2.0
+  - dependency-name: djangocms-style
+    versions:
+    - 3.0.0
+  - dependency-name: psycopg2
+    versions:
+    - 2.8.6
+  - dependency-name: pip
+    versions:
+    - "21.0"
+    - 21.0.1
+  - dependency-name: twine
+    versions:
+    - 3.3.0
+    - 3.4.0
+  - dependency-name: pillow
+    versions:
+    - 8.1.0
+    - 8.1.1
+  - dependency-name: flake8
+    versions:
+    - 3.8.4
